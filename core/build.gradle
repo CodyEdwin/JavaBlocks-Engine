@@ -1,0 +1,78 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // Core LibGDX
+    implementation "com.badlogicgames.gdx:gdx:${libgdxVersion}"
+    
+    // Physics - Box2D for 2D physics
+    implementation "com.badlogicgames.gdx:gdx-box2d:${box2dVersion}"
+    
+    // FreeType for font rendering
+    implementation "com.badlogicgames.gdx:gdx-freetype:${libgdxVersion}"
+    
+    // Tools for development utilities
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // Annotation processing for component registration
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    
+    // Testing
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation "com.badlogicgames.gdx:gdx-backend-headless:${libgdxVersion}"
+    testImplementation "com.badlogicgames.gdx:gdx-box2d:${box2dVersion}"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+            include '**/*.java'
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+// JAR configuration for core module
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': 'JavaBlocks Core',
+            'Implementation-Version': version,
+            'Built-By': 'MiniMax Agent',
+            'Bundle-SymbolicName': 'com.javablocks.core',
+            'Bundle-Version': version
+        )
+    }
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+}
+
+test {
+    useJUnitPlatform()
+    maxParallelForks = Runtime.runtime.availableProcessors()
+}
+
+// Javadoc configuration
+javadoc {
+    options.author = true
+    options.version = true
+    options.links('https://docs.oracle.com/en/java/javase/21/docs/api/')
+    options.links('https://libgdx.com/api/')
+}

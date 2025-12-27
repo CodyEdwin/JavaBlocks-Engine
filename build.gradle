@@ -1,0 +1,131 @@
+// JavaBlocks Root Build Configuration
+// Pure Java Game Engine and Creation Suite
+// Java 21 + LibGDX Framework
+
+plugins {
+    id 'java-library'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
+}
+
+allprojects {
+    group = 'com.javablocks'
+    version = '1.0.0-SNAPSHOT'
+    
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        sourceCompatibility = '21'
+        targetCompatibility = '21'
+        
+        // Enable all compiler warnings for robustness
+        options.compilerArgs << '-Xlint:all' << '-Werror' << '-Xlint:-processing'
+    }
+    
+    tasks.withType(Jar).configureEach {
+        archiveFileName = "${project.name}-${version}.${archiveExtension.get()}"
+    }
+}
+
+// Shared version management for consistency
+ext {
+    // LibGDX versions (latest stable 2025)
+    libgdxVersion = '1.12.1'
+    libgdxBackendLwjglVersion = '3.3.4'
+    libgdxBackendAndroidVersion = '1.12.1'
+    
+    // Physics
+    box2dVersion = '1.12.1'
+    
+    // Testing
+    junitVersion = '5.11.0'
+    mockitoVersion = '5.10.0'
+    
+    // Build tools
+    androidSdkVersion = '35'
+    
+    // Kotlin for scripting extensions
+    kotlinVersion = '1.9.22'
+}
+
+// Universal test configuration
+subprojects {
+    apply plugin: 'java-library'
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+    
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+    
+    dependencies {
+        // Core LibGDX dependency for all modules
+        implementation "com.badlogicgames.gdx:gdx:${libgdxVersion}"
+        
+        // Testing dependencies
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    }
+    
+    test {
+        useJUnitPlatform()
+        maxParallelForks = Runtime.runtime.availableProcessors()
+        failFast = false
+    }
+}
+
+// JavaBlocks distribution configuration
+task dist(type: Jar, dependsOn: classes) {
+    manifest {
+        attributes(
+            'Main-Class': 'com.javablocks.desktop.JavaBlocksDesktop',
+            'Implementation-Title': 'JavaBlocks Engine',
+            'Implementation-Version': version,
+            'Built-By': 'MiniMax Agent',
+            'Build-Date': new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    } {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    destinationDirectory = file('dist')
+    archiveFileName = 'JavaBlocks-${version}.jar'
+}
+
+artifacts {
+    archives dist
+}
+
+// Code quality tasks
+checkstyle {
+    toolVersion = '10.14.2'
+    showViolations = true
+    maxErrors = 0
+    maxWarnings = 0
+}
+
+spotbugs {
+    effort = 'default'
+    reportLevel = 'default'
+    excludeFilter = file("${rootDir}/config/spotbugs/exclude.xml")
+}
+
+task codeQuality {
+    dependsOn checkstyle, spotbugs
+    description = 'Run all code quality checks'
+}
+
+wrapper {
+    gradleVersion = '8.7'
+    distributionType = WrapperDistributionType.ALL
+}

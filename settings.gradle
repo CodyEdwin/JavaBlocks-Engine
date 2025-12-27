@@ -1,0 +1,29 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = 'JavaBlocks'
+
+include 'core'
+include 'desktop'
+include 'android'
+include 'html'
+include 'editor'
+include 'server'
+include 'assets'
+include 'plugins'
+include 'marketplace'
+include 'tools'
