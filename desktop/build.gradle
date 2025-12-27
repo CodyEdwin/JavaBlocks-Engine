@@ -1,0 +1,90 @@
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow'
+}
+
+dependencies {
+    // Project dependencies
+    implementation project(':core')
+    
+    // LibGDX Desktop backend
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:${libgdxVersion}"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:${libgdxBackendLwjglVersion}"
+    
+    // Graphics
+    implementation "com.badlogicgames.gdx:gdx-platform:${libgdxVersion}:natives-desktop"
+    
+    // Audio
+    implementation "com.badlogicgames.gdx:gdx-openal:${libgdxVersion}"
+    
+    // FreeType for fonts
+    implementation "com.badlogicgames.gdx:gdx-freetype-platform:${libgdxVersion}:natives-desktop"
+    
+    // VisUI for editor
+    implementation 'com.github.kotcrab.vis:vis-ui:1.5.0'
+    
+    // Controls for gamepad support
+    implementation 'com.github.libgdx:gdx-controllers:2.0.0'
+    
+    // Testing
+    testImplementation project(':core').sourceSets.test.output
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
+
+// Application configuration
+application {
+    mainClass = 'com.javablocks.desktop.JavaBlocksDesktop'
+}
+
+run {
+    workingDir = '..'
+}
+
+// JAR configuration
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.javablocks.desktop.JavaBlocksDesktop',
+            'Implementation-Title': 'JavaBlocks Desktop',
+            'Implementation-Version': version,
+            'Built-By': 'MiniMax Agent'
+        )
+    }
+}
+
+// Shadow JAR for distribution
+shadowJar {
+    archiveFileName = 'JavaBlocks-Desktop-${version}.jar'
+    mergeServiceFiles()
+    include '**/*.class'
+    include '**/*.properties'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    
+    // Don't include test classes
+    configurations = [project.configurations.runtimeClasspath]
+}
+
+// Native library extraction
+task extractNatives(type: Copy) {
+    description = 'Extracts native libraries from JARs'
+    from { configurations.runtimeClasspath.findAll { it.name.endsWith('-natives.jar') } }
+    into "$buildDir/natives"
+    include '**/*.so', '**/*.dylib', '**/*.dll'
+}
+
+run.dependsOn extractNatives
+
+// Debug configuration
+task debug(type: JavaExec) {
+    description = 'Runs the application in debug mode'
+    group = 'application'
+    mainClass = 'com.javablocks.desktop.JavaBlocksDesktop'
+    jvmArgs = [
+        '-Xdebug',
+        '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+    ]
+    workingDir = '..'
+}

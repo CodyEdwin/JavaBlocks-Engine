@@ -1,0 +1,45 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    // Project dependencies
+    implementation project(':core')
+    implementation project(':desktop')
+    
+    // VisUI for editor interface
+    implementation 'com.github.kotcrab.vis:vis-ui:1.5.0'
+    
+    // JSON for serialization
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // Testing
+    testImplementation project(':core').sourceSets.test.output
+}
+
+// Application configuration
+application {
+    mainClass = 'com.javablocks.editor.JavaBlocksEditor'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.javablocks.editor.JavaBlocksEditor',
+            'Implementation-Title': 'JavaBlocks Editor',
+            'Implementation-Version': version,
+            'Built-By': 'MiniMax Agent'
+        )
+    }
+}
+
+shadowJar {
+    archiveFileName = 'JavaBlocks-Editor-${version}.jar'
+    mergeServiceFiles()
+    include '**/*.class'
+    include '**/*.properties'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    configurations = [project.configurations.runtimeClasspath]
+}

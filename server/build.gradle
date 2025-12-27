@@ -1,0 +1,90 @@
+plugins {
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow'
+}
+
+dependencies {
+    // Project dependencies
+    implementation project(':core')
+    
+    // HTTP server
+    implementation 'org.eclipse.jetty:jetty-server:11.0.18'
+    implementation 'org.eclipse.jetty:jetty-servlet:11.0.18'
+    implementation 'org.eclipse.jetty:jetty-websocket:11.0.18'
+    
+    // WebSocket support
+    implementation 'org.java-websocket:Java-WebSocket:1.5.4'
+    
+    // Database
+    implementation 'com.h2database:h2:2.3.230'
+    
+    // Serialization
+    implementation 'com.esotericsoftware:kryo:5.5.0'
+    
+    // YAML configuration
+    implementation 'org.yaml:snakeyaml:2.2'
+    
+    // JSON
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.0.11'
+    implementation 'org.slf4j:slf4j-simple:2.0.11'
+    
+    // Threading
+    implementation 'com.google.guava:guava:32.1.3-jre'
+    
+    // Testing
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+}
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': 'JavaBlocks Server',
+            'Implementation-Version': version,
+            'Built-By': 'MiniMax Agent',
+            'Main-Class': 'com.javablocks.server.JavaBlocksServer'
+        )
+    }
+}
+
+// Shadow JAR for distribution
+shadowJar {
+    archiveFileName = 'JavaBlocks-Server-${version}.jar'
+    mergeServiceFiles()
+    include '**/*.class'
+    include '**/*.properties'
+    include '**/*.yml'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    configurations = [project.configurations.runtimeClasspath]
+    
+    // Minimize JAR
+    minimize()
+}
+
+// Application configuration
+task runServer(type: JavaExec) {
+    description = 'Runs the game server'
+    group = 'application'
+    mainClass = 'com.javablocks.server.JavaBlocksServer'
+    workingDir = '..'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+// Debug configuration
+task debugServer(type: JavaExec) {
+    description = 'Runs the game server in debug mode'
+    group = 'application'
+    mainClass = 'com.javablocks.server.JavaBlocksServer'
+    workingDir = '..'
+    classpath = sourceSets.main.runtimeClasspath
+    jvmArgs = [
+        '-Xdebug',
+        '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005'
+    ]
+}
