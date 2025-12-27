@@ -37,10 +37,10 @@ class ActiveComponentTest {
     @DisplayName("toggle should switch state")
     void toggleShouldSwitchState() {
         ActiveComponent component = new ActiveComponent(true);
-        assertTrue(component.toggle());
+        assertFalse(component.toggle());
         assertFalse(component.isActive());
         
-        assertFalse(component.toggle());
+        assertTrue(component.toggle());
         assertTrue(component.isActive());
     }
     
