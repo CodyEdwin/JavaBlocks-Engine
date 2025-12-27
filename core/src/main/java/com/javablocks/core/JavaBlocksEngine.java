@@ -9,9 +9,9 @@
  */
 package com.javablocks.core;
 
+import com.javablocks.core.components.*;
 import com.javablocks.core.ecs.*;
 import com.javablocks.core.events.*;
-import com.javablocks.core.io.*;
 import com.javablocks.core.math.*;
 import com.javablocks.core.scene.*;
 import com.javablocks.core.plugin.*;
@@ -102,7 +102,7 @@ public final class JavaBlocksEngine {
      */
     private final ForkJoinPool gameLogicPool = new ForkJoinPool(
         Runtime.getRuntime().availableProcessors(),
-        ForkJoinPool.defaultCommonPoolParallelism,
+        ForkJoinPool.defaultForkJoinWorkerThreadFactory,
         null,
         false
     );
@@ -927,30 +927,31 @@ public final class JavaBlocksEngine {
     /**
      * Built-in engine signals for core events.
      */
+    @SuppressWarnings("rawtypes")
     public static final class EngineSignals {
         /** Signal dispatched when the engine starts. */
-        public static final Class<Signal<Void>> ENGINE_STARTED = Signal.class;
+        public static final Class<Signal> ENGINE_STARTED = Signal.class;
         
         /** Signal dispatched each update frame. */
-        public static final Class<Signal<UpdateEvent>> ENGINE_UPDATE = Signal.class;
+        public static final Class<Signal> ENGINE_UPDATE = Signal.class;
         
         /** Signal dispatched when the engine pauses. */
-        public static final Class<Signal<Void>> ENGINE_PAUSED = Signal.class;
+        public static final Class<Signal> ENGINE_PAUSED = Signal.class;
         
         /** Signal dispatched when the engine resumes. */
-        public static final Class<Signal<Void>> ENGINE_RESUMED = Signal.class;
+        public static final Class<Signal> ENGINE_RESUMED = Signal.class;
         
         /** Signal dispatched when the engine stops. */
-        public static final Class<Signal<Void>> ENGINE_STOPPED = Signal.class;
+        public static final Class<Signal> ENGINE_STOPPED = Signal.class;
         
         /** Signal dispatched when an entity is created. */
-        public static final Class<Signal<Entity>> ENTITY_CREATED = Signal.class;
+        public static final Class<Signal> ENTITY_CREATED = Signal.class;
         
         /** Signal dispatched when an entity is destroyed. */
-        public static final Class<Signal<Entity>> ENTITY_DESTROYED = Signal.class;
+        public static final Class<Signal> ENTITY_DESTROYED = Signal.class;
         
         /** Signal dispatched when the scene changes. */
-        public static final Class<Signal<Scene>> SCENE_CHANGED = Signal.class;
+        public static final Class<Signal> SCENE_CHANGED = Signal.class;
         
         private EngineSignals() {} // Prevent instantiation
     }

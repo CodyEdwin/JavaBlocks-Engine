@@ -7,6 +7,7 @@
 package com.javablocks.core.math;
 
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.graphics.Color;
 import java.util.*;
 
 /**

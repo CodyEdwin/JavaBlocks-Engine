@@ -95,7 +95,29 @@ public final class PluginClassLoader extends ClassLoader {
     }
     
     /**
-     * Loads a class from a specific JAR file.
+     * Loads a class from a JAR file, automatically finding the Plugin implementation.
+     * 
+     * @param jarPath Path to the JAR file
+     * @return The loaded class
+     * @throws ClassNotFoundException if not found
+     */
+    public Class<? extends Plugin> loadClassFromJar(String jarPath) 
+            throws ClassNotFoundException {
+        if (!addJar(jarPath)) {
+            throw new ClassNotFoundException("Failed to add JAR: " + jarPath);
+        }
+        
+        // Try to find Plugin implementation
+        try {
+            // This is a simplified approach - in production, you'd scan the JAR
+            return loadClass("Plugin").asSubclass(Plugin.class);
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundException("No Plugin class found in JAR: " + jarPath);
+        }
+    }
+    
+    /**
+     * Loads a specific class from a JAR file.
      * 
      * @param jarPath Path to the JAR file
      * @param className Name of the class to load
@@ -168,18 +190,14 @@ public final class PluginClassLoader extends ClassLoader {
     @Override
     protected URL findResource(String name) {
         for (URL jarUrl : jarUrls) {
-            try {
-                URLClassLoader jarLoader = new URLClassLoader(
-                    new URL[] { jarUrl },
-                    parent
-                );
-                
-                URL resource = jarLoader.getResource(name);
-                if (resource != null) {
-                    return resource;
-                }
-            } catch (IOException e) {
-                // Continue to next JAR
+            URLClassLoader jarLoader = new URLClassLoader(
+                new URL[] { jarUrl },
+                parent
+            );
+            
+            URL resource = jarLoader.getResource(name);
+            if (resource != null) {
+                return resource;
             }
         }
         

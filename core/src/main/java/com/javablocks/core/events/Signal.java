@@ -303,7 +303,7 @@ public class Signal<T> {
         
         synchronized (dispatchLock) {
             eventsToProcess = pendingEvents;
-            pendingEvents = new ArrayDeque<>();
+            pendingEvents.clear();
             hasPendingDispatch = false;
         }
         

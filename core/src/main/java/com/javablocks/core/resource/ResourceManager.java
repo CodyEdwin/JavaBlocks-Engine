@@ -6,7 +6,6 @@
 package com.javablocks.core.resource;
 
 import com.javablocks.core.*;
-import com.javablocks.core.io;
 import java.util.*;
 import java.util.concurrent.*;
 

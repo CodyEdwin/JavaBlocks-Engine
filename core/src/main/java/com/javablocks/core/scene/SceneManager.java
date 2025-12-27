@@ -145,6 +145,15 @@ public class SceneManager {
         return currentScene;
     }
     
+    /**
+     * Creates and sets a new default scene.
+     * 
+     * @return The new default scene
+     */
+    public Scene createDefaultScene() {
+        return createAndSetScene(defaultSceneName);
+    }
+    
     // ==================== Scene Management ====================
     
     /**

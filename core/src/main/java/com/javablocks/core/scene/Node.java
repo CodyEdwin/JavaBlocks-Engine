@@ -9,6 +9,7 @@ package com.javablocks.core.scene;
 import com.javablocks.core.*;
 import com.javablocks.core.ecs.*;
 import com.javablocks.core.events.*;
+import com.javablocks.core.graph.Connection;
 import com.javablocks.core.math.*;
 import java.util.*;
 
@@ -315,7 +316,7 @@ public class Node implements Comparable<Node> {
      * 
      * @param scene The scene to set
      */
-    private void setScene(Scene scene) {
+    void setScene(Scene scene) {
         this.scene = scene;
         
         // Propagate to children
@@ -332,7 +333,7 @@ public class Node implements Comparable<Node> {
     /**
      * Clears the scene reference (internal).
      */
-    private void clearScene() {
+    void clearScene() {
         // Exit tree first
         if (insideTree) {
             exitTree();

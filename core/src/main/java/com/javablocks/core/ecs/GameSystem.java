@@ -7,6 +7,7 @@
 package com.javablocks.core.ecs;
 
 import com.javablocks.core.*;
+import com.javablocks.core.events.*;
 import java.util.*;
 
 /**

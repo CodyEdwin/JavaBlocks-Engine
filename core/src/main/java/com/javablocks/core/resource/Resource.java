@@ -11,9 +11,10 @@ package com.javablocks.core.resource;
  * Resources are assets that can be loaded from files or generated.
  * They are managed by the ResourceManager.
  * 
+ * @param <T> The type of resource data
  * @author JavaBlocks Engine Team
  */
-public interface Resource {
+public interface Resource<T> {
     
     /**
      * Gets the resource path.
@@ -85,4 +86,11 @@ public interface Resource {
     default String getId() {
         return getPath();
     }
+    
+    /**
+     * Gets the resource data.
+     * 
+     * @return The resource data
+     */
+    T getData();
 }

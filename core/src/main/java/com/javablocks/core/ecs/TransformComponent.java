@@ -237,7 +237,9 @@ public final class TransformComponent implements Component {
      * @return This transform for chaining
      */
     public TransformComponent rotateX(float degrees) {
-        rotation.mul(Quaternion.set(1, 0, 0, degrees));
+        Quaternion temp = new Quaternion();
+        temp.setFromAxis(1, 0, 0, degrees);
+        rotation.mul(temp);
         markDirty();
         return this;
     }
@@ -249,7 +251,9 @@ public final class TransformComponent implements Component {
      * @return This transform for chaining
      */
     public TransformComponent rotateY(float degrees) {
-        rotation.mul(Quaternion.set(0, 1, 0, degrees));
+        Quaternion temp = new Quaternion();
+        temp.setFromAxis(0, 1, 0, degrees);
+        rotation.mul(temp);
         markDirty();
         return this;
     }
@@ -261,7 +265,9 @@ public final class TransformComponent implements Component {
      * @return This transform for chaining
      */
     public TransformComponent rotateZ(float degrees) {
-        rotation.mul(Quaternion.set(0, 0, 1, degrees));
+        Quaternion temp = new Quaternion();
+        temp.setFromAxis(0, 0, 1, degrees);
+        rotation.mul(temp);
         markDirty();
         return this;
     }
@@ -345,7 +351,7 @@ public final class TransformComponent implements Component {
             Vector3 scaledLocalPos = new Vector3(position);
             scaledLocalPos.scl(parentTransform.worldScale);
             worldPosition.set(parentTransform.worldPosition);
-            worldPosition.rotate(parentTransform.worldRotation);
+            worldPosition.mul(parentTransform.worldRotation);
             worldPosition.add(scaledLocalPos);
             
             // Rotation = parentRotation * localRotation
@@ -358,8 +364,11 @@ public final class TransformComponent implements Component {
         }
         
         // Update matrices
-        localToWorldMatrix.setToTranslationAndRotation(worldPosition, worldRotation, worldScale);
-        worldToLocalMatrix.inv(localToWorldMatrix);
+        localToWorldMatrix.setTranslation(worldPosition);
+        localToWorldMatrix.rotate(worldRotation);
+        localToWorldMatrix.scale(worldScale.x, worldScale.y, worldScale.z);
+        worldToLocalMatrix.set(localToWorldMatrix);
+        worldToLocalMatrix.inv();
         
         isDirty = false;
     }
@@ -426,7 +435,8 @@ public final class TransformComponent implements Component {
      * @return Point in world space
      */
     public Vector3 localToWorld(Vector3 localPoint) {
-        return localToWorldMatrix.transform(localPoint);
+        Vector3 result = new Vector3(localPoint);
+        return result.mul(localToWorldMatrix);
     }
     
     /**
@@ -436,7 +446,8 @@ public final class TransformComponent implements Component {
      * @return Point in local space
      */
     public Vector3 worldToLocal(Vector3 worldPoint) {
-        return worldToLocalMatrix.transform(worldPoint);
+        Vector3 result = new Vector3(worldPoint);
+        return result.mul(worldToLocalMatrix);
     }
     
     /**
@@ -447,8 +458,7 @@ public final class TransformComponent implements Component {
      */
     public Vector3 localToWorldDirection(Vector3 localDirection) {
         Vector3 result = new Vector3(localDirection);
-        result.rotate(worldRotation);
-        return result;
+        return worldRotation.transform(result);
     }
     
     // ==================== Hierarchy Methods ====================

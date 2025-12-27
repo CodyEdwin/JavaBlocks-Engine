@@ -8,6 +8,9 @@ package com.javablocks.core.ecs;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.javablocks.core.components.*;
 
 /**
  * Registry that maps component classes to unique type IDs.

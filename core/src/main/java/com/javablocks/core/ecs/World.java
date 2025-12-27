@@ -7,6 +7,7 @@
 package com.javablocks.core.ecs;
 
 import com.javablocks.core.*;
+import com.javablocks.core.components.*;
 import com.javablocks.core.events.*;
 import com.javablocks.core.math.*;
 import java.util.*;
@@ -80,7 +81,7 @@ public final class World {
      * Internal structure for pending entity operations.
      */
     private static final class EntityOperation {
-        final enum Type { CREATE, DESTROY, ADD_COMPONENT, REMOVE_COMPONENT }
+        enum Type { CREATE, DESTROY, ADD_COMPONENT, REMOVE_COMPONENT }
         
         final Type type;
         final Entity entity;
@@ -927,7 +928,12 @@ public final class World {
         }
         
         Collection<Entity> getEntitiesWith(Class<? extends Component>... componentClasses) {
-            LongHashSet result = new LongHashSet(entities);
+            LongHashSet result = new LongHashSet();
+            
+            // Copy entities to result
+            for (long packed : entities) {
+                result.add(packed);
+            }
             
             for (Class<? extends Component> componentClass : componentClasses) {
                 int typeId = ComponentRegistry.getTypeId(componentClass);
@@ -948,7 +954,7 @@ public final class World {
     /**
      * Simple hash set for long values.
      */
-    private static final class LongHashSet {
+    private static final class LongHashSet implements Iterable<Long> {
         private static final float LOAD_FACTOR = 0.75f;
         
         private long[] table;
@@ -1022,6 +1028,31 @@ public final class World {
         
         int size() {
             return size;
+        }
+        
+        @Override
+        public java.util.Iterator<Long> iterator() {
+            return new java.util.Iterator<Long>() {
+                private int index = 0;
+                private int count = 0;
+                
+                @Override
+                public boolean hasNext() {
+                    return count < size;
+                }
+                
+                @Override
+                public Long next() {
+                    while (index < capacity) {
+                        long value = table[index++];
+                        if (value >= 0) {
+                            count++;
+                            return value;
+                        }
+                    }
+                    throw new java.util.NoSuchElementException();
+                }
+            };
         }
         
         private void rehash() {

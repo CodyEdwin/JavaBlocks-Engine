@@ -9,6 +9,7 @@ package com.javablocks.core.ecs;
 import com.javablocks.core.*;
 import com.javablocks.core.events.*;
 import com.javablocks.core.math.*;
+import com.javablocks.core.utils.IntStack;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
