@@ -12,6 +12,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://repo.eclipse.org/content/repositories/jetty/' }
     }
 }
 
@@ -22,7 +23,7 @@ include 'core'
 // include 'android'
 // include 'html'
 // include 'editor'
-include 'server'
+// include 'server'  // Disabled - incomplete implementation
 include 'assets'
 include 'plugins'
 include 'marketplace'
