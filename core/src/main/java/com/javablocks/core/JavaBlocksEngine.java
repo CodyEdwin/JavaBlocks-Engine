@@ -309,16 +309,19 @@ public final class JavaBlocksEngine {
             // Phase 2: ECS and Scene
             this.world = new World(configuration);
             this.sceneManager = new SceneManager();
-            
-            // Phase 3: Register engine-level signals
+
+            // Phase 3: Initialize plugin manager
+            pluginManager.initialize(this);
+
+            // Phase 4: Register engine-level signals
             registerEngineSignals();
-            
-            // Phase 4: Load plugins if enabled
+
+            // Phase 5: Load plugins if enabled
             if (!configuration.hotReloadEnabled) {
                 pluginManager.loadPlugins();
             }
-            
-            // Phase 5: Create default scene
+
+            // Phase 6: Create default scene
             sceneManager.createDefaultScene();
             
             initializationTime = System.nanoTime() - startTime;

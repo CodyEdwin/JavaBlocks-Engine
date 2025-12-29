@@ -59,10 +59,10 @@ public final class PluginManager {
     
     /**
      * Initializes the plugin manager with the engine.
-     * 
+     *
      * @param engine The engine instance
      */
-    void initialize(JavaBlocksEngine engine) {
+    public void initialize(JavaBlocksEngine engine) {
         this.engine = engine;
     }
     
