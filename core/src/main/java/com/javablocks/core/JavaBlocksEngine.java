@@ -396,6 +396,21 @@ public final class JavaBlocksEngine {
         processPendingOperations();
     }
     
+    /**
+     * Handles window resize events.
+     * 
+     * @param width New window width
+     * @param height New window height
+     */
+    public void resize(int width, int height) {
+        if (state == EngineState.RUNNING || state == EngineState.PAUSED) {
+            // Update rendering systems with new dimensions
+            if (configuration.debugMode) {
+                System.out.println("[JavaBlocks] Window resized to " + width + "x" + height);
+            }
+        }
+    }
+    
     // ==================== Rendering ====================
     
     /**

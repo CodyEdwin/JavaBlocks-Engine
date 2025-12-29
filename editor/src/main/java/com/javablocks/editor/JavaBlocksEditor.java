@@ -8,6 +8,7 @@ package com.javablocks.editor;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.backends.lwjgl3.*;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.utils.viewport.*;
 import com.javablocks.core.*;
 import com.javablocks.desktop.*;
 
@@ -54,12 +55,9 @@ public class JavaBlocksEditor implements ApplicationListener {
         // Configure LWJGL3
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle(WINDOW_TITLE);
-        config.setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         config.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-        config.setVsync(true);
-        config.setTargetFrameRate(60);
+        config.setForegroundFPS(60);
         config.setResizable(true);
-        config.setOpenGLCoreProfileGLLibraries();
         
         // Create application
         try {
@@ -94,7 +92,7 @@ public class JavaBlocksEditor implements ApplicationListener {
      */
     private void createEditorUI() {
         // Create stage
-        uiStage = new Stage(new ScreenViewport());
+        uiStage = new Stage(new ExtendViewport(WINDOW_WIDTH, WINDOW_HEIGHT));
         
         // Set up input
         Gdx.input.setInputProcessor(uiStage);

@@ -7,6 +7,7 @@ package com.javablocks.editor;
 
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.*;
 import com.kotcrab.vis.ui.widget.*;
 
@@ -123,47 +124,47 @@ public class EditorScreen {
         
         // File menu
         Menu fileMenu = new Menu("File");
-        fileMenu.addItem(new MenuItem("New Project", () -> System.out.println("New Project")));
-        fileMenu.addItem(new MenuItem("Open Project", () -> System.out.println("Open Project")));
+        fileMenu.addItem(new MenuItem("New Project"));
+        fileMenu.addItem(new MenuItem("Open Project"));
         fileMenu.addSeparator();
-        fileMenu.addItem(new MenuItem("Save", () -> System.out.println("Save")));
-        fileMenu.addItem(new MenuItem("Save As...", () -> System.out.println("Save As")));
+        fileMenu.addItem(new MenuItem("Save"));
+        fileMenu.addItem(new MenuItem("Save As..."));
         fileMenu.addSeparator();
-        fileMenu.addItem(new MenuItem("Exit", () -> System.out.println("Exit")));
+        fileMenu.addItem(new MenuItem("Exit"));
         menuBar.addMenu(fileMenu);
         
         // Edit menu
         Menu editMenu = new Menu("Edit");
-        editMenu.addItem(new MenuItem("Undo", () -> System.out.println("Undo")));
-        editMenu.addItem(new MenuItem("Redo", () -> System.out.println("Redo")));
+        editMenu.addItem(new MenuItem("Undo"));
+        editMenu.addItem(new MenuItem("Redo"));
         editMenu.addSeparator();
-        editMenu.addItem(new MenuItem("Cut", () -> System.out.println("Cut")));
-        editMenu.addItem(new MenuItem("Copy", () -> System.out.println("Copy")));
-        editMenu.addItem(new MenuItem("Paste", () -> System.out.println("Paste")));
+        editMenu.addItem(new MenuItem("Cut"));
+        editMenu.addItem(new MenuItem("Copy"));
+        editMenu.addItem(new MenuItem("Paste"));
         menuBar.addMenu(editMenu);
         
         // View menu
         Menu viewMenu = new Menu("View");
-        viewMenu.addItem(new MenuItem("Hierarchy", () -> System.out.println("Toggle Hierarchy")));
-        viewMenu.addItem(new MenuItem("Inspector", () -> System.out.println("Toggle Inspector")));
-        viewMenu.addItem(new MenuItem("Console", () -> System.out.println("Toggle Console")));
+        viewMenu.addItem(new MenuItem("Hierarchy"));
+        viewMenu.addItem(new MenuItem("Inspector"));
+        viewMenu.addItem(new MenuItem("Console"));
         menuBar.addMenu(viewMenu);
         
         // Game menu
         Menu gameMenu = new Menu("Game");
-        gameMenu.addItem(new MenuItem("Play", () -> System.out.println("Play")));
-        gameMenu.addItem(new MenuItem("Pause", () -> System.out.println("Pause")));
-        gameMenu.addItem(new MenuItem("Stop", () -> System.out.println("Stop")));
+        gameMenu.addItem(new MenuItem("Play"));
+        gameMenu.addItem(new MenuItem("Pause"));
+        gameMenu.addItem(new MenuItem("Stop"));
         gameMenu.addSeparator();
-        gameMenu.addItem(new MenuItem("Settings...", () -> System.out.println("Settings")));
+        gameMenu.addItem(new MenuItem("Settings..."));
         menuBar.addMenu(gameMenu);
         
         // Help menu
         Menu helpMenu = new Menu("Help");
-        helpMenu.addItem(new MenuItem("Documentation", () -> System.out.println("Documentation")));
-        helpMenu.addItem(new MenuItem("API Reference", () -> System.out.println("API Reference")));
+        helpMenu.addItem(new MenuItem("Documentation"));
+        helpMenu.addItem(new MenuItem("API Reference"));
         helpMenu.addSeparator();
-        helpMenu.addItem(new MenuItem("About", () -> System.out.println("About")));
+        helpMenu.addItem(new MenuItem("About"));
         menuBar.addMenu(helpMenu);
     }
     
@@ -180,15 +181,11 @@ public class EditorScreen {
         hierarchyPanel.add(title).top().left().pad(5);
         hierarchyPanel.row();
         
-        // Tree view for nodes
-        VisTree<String> tree = new VisTree<>();
-        tree.addItem("Root");
-        tree.addItem("Camera");
-        tree.addItem("Light");
-        tree.addItem("Player");
-        tree.addItem("Enemy");
+        // Simple list for hierarchy
+        VisList<String> list = new VisList<>();
+        list.setItems("Root", "Camera", "Light", "Player", "Enemy");
         
-        hierarchyPanel.add(tree).grow().pad(5);
+        hierarchyPanel.add(list).grow().pad(5);
     }
     
     /**
@@ -262,24 +259,16 @@ public class EditorScreen {
         bottomPanel = new VisTable(true);
         bottomPanel.setBackground("window-bg");
         
-        // Tabbed pane for console/assets
-        VisTabbedPane tabbedPane = new VisTabbedPane();
+        // Title
+        VisLabel title = new VisLabel("Output");
+        title.setStyle(VisUI.getSkin().get("title", Label.LabelStyle.class));
+        bottomPanel.add(title).top().left().pad(5);
+        bottomPanel.row();
         
-        // Console tab
-        VisTable consoleContent = new VisTable();
+        // Console area
         VisTextArea consoleArea = new VisTextArea();
         consoleArea.setText("Welcome to JavaBlocks Editor v1.0.0\n>");
-        consoleContent.add(consoleArea).grow();
-        
-        // Assets tab
-        VisTable assetsContent = new VisTable();
-        VisLabel assetsPlaceholder = new VisLabel("Asset Browser");
-        assetsContent.add(assetsPlaceholder).center();
-        
-        tabbedPane.add("Console", consoleContent);
-        tabbedPane.add("Assets", assetsContent);
-        
-        bottomPanel.add(tabbedPane).grow().pad(5);
+        bottomPanel.add(consoleArea).grow().pad(5);
     }
     
     // ==================== Update ====================

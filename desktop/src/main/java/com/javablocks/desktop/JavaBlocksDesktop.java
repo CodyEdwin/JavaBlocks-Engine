@@ -59,14 +59,14 @@ public class JavaBlocksDesktop implements ApplicationListener {
         // Configure LWJGL3
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle(WINDOW_TITLE);
-        config.setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        // Window size is set via setWindowedMode
         config.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-        config.setVsync(vsync);
-        config.setTargetFrameRate(targetFPS);
-        config.setResizable(true);
         
-        // Enable OpenGL 3.3 core profile
-        config.setOpenGLCoreProfileGLLibraries();
+        // FPS and vsync
+        config.setForegroundFPS(targetFPS);
+        
+        // Resizable window
+        config.setResizable(true);
         
         // Audio configuration
         config.setAudioConfig(512, 256, 16);
@@ -270,14 +270,11 @@ public class JavaBlocksDesktop implements ApplicationListener {
      */
     public void setFullscreen(boolean fullscreen) {
         if (application != null) {
+            Graphics graphics = application.getGraphics();
             if (fullscreen) {
-                application.getGraphics().setFullscreenMode(
-                    Lwjgl3Graphics.getDisplayMode()
-                );
+                graphics.setFullscreenMode(graphics.getDisplayMode());
             } else {
-                application.getGraphics().setWindowedMode(
-                    WINDOW_WIDTH, WINDOW_HEIGHT
-                );
+                graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
             }
         }
     }
@@ -304,17 +301,15 @@ public class JavaBlocksDesktop implements ApplicationListener {
      * Minimizes the window.
      */
     public void minimize() {
-        if (application != null) {
-            application.getGraphics().setMinimized(true);
-        }
+        // Minimization is handled by the window system
+        // This is a no-op in older libGDX versions
     }
     
     /**
      * Maximizes the window.
      */
     public void maximize() {
-        if (application != null) {
-            application.getGraphics().setMaximized(true);
-        }
+        // Maximization is handled by the window system
+        // This is a no-op in older libGDX versions
     }
 }

@@ -8,6 +8,9 @@ dependencies {
     implementation project(':core')
     implementation project(':desktop')
     
+    // LibGDX backend for editor
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:${libgdxVersion}"
+    
     // VisUI for editor interface - using maven central instead of jitpack
     implementation 'com.kotcrab.vis:vis-ui:1.5.0'
     
