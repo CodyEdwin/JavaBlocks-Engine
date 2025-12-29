@@ -19,11 +19,11 @@ dependencyResolutionManagement {
 rootProject.name = 'JavaBlocks'
 
 include 'core'
-// include 'desktop'
+// include 'desktop'       // Disabled - API compatibility issues with libGDX
 // include 'android'
 // include 'html'
-// include 'editor'
-// include 'server'  // Disabled - incomplete implementation
+// include 'editor'        // Disabled - depends on desktop
+// include 'server'        // Disabled - incomplete implementation
 include 'assets'
 include 'plugins'
 include 'marketplace'

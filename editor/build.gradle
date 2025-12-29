@@ -1,5 +1,6 @@
 plugins {
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 dependencies {
@@ -7,8 +8,8 @@ dependencies {
     implementation project(':core')
     implementation project(':desktop')
     
-    // VisUI for editor interface
-    implementation 'com.github.kotcrab.vis:vis-ui:1.5.0'
+    // VisUI for editor interface - using maven central instead of jitpack
+    implementation 'com.kotcrab.vis:vis-ui:1.5.0'
     
     // JSON for serialization
     implementation 'com.google.code.gson:gson:2.10.1'

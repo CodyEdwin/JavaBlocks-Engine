@@ -9,22 +9,21 @@ dependencies {
     
     // LibGDX Desktop backend
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:${libgdxVersion}"
-    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:${libgdxBackendLwjglVersion}"
     
     // Graphics
     implementation "com.badlogicgames.gdx:gdx-platform:${libgdxVersion}:natives-desktop"
     
-    // Audio
-    implementation "com.badlogicgames.gdx:gdx-openal:${libgdxVersion}"
+    // Audio - gdx-openal is now bundled in main libgdx artifact
+    // implementation "com.badlogicgames.gdx:gdx-openal:1.12.1"
     
     // FreeType for fonts
     implementation "com.badlogicgames.gdx:gdx-freetype-platform:${libgdxVersion}:natives-desktop"
     
-    // VisUI for editor
-    implementation 'com.github.kotcrab.vis:vis-ui:1.5.0'
+    // VisUI for editor - using updated version from maven central
+    implementation 'com.kotcrab.vis:vis-ui:1.5.0'
     
-    // Controls for gamepad support
-    implementation 'com.github.libgdx:gdx-controllers:2.0.0'
+    // Controls for gamepad support - using gdx-controllers extension
+    // implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:2.2.1"
     
     // Testing
     testImplementation project(':core').sourceSets.test.output
