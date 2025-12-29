@@ -23,7 +23,7 @@ dependencies {
     implementation 'com.kotcrab.vis:vis-ui:1.5.0'
     
     // Controls for gamepad support - using gdx-controllers extension
-    // implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:2.2.1"
+    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:${gdxControllersVersion}"
     
     // Testing
     testImplementation project(':core').sourceSets.test.output

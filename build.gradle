@@ -32,6 +32,7 @@ ext {
     libgdxVersion = '1.12.1'
     libgdxBackendLwjglVersion = '3.3.4'
     libgdxBackendAndroidVersion = '1.12.1'
+    gdxControllersVersion = '2.2.1'
     
     // Physics
     box2dVersion = '1.12.1'
