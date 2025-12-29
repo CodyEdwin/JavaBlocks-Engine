@@ -37,13 +37,15 @@ jar {
     }
 }
 
+// Shadow JAR for fat JAR distribution
 shadowJar {
-    archiveFileName = 'JavaBlocks-Editor-${version}.jar'
+    archiveBaseName.set('JavaBlocks-Editor')
+    archiveVersion.set(version)
     mergeServiceFiles()
-    include '**/*.class'
-    include '**/*.properties'
     exclude 'META-INF/*.SF'
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
+    
+    // Include all runtime dependencies
     configurations = [project.configurations.runtimeClasspath]
 }

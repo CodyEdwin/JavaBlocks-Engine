@@ -54,7 +54,8 @@ jar {
 
 // Shadow JAR for distribution
 shadowJar {
-    archiveFileName = 'JavaBlocks-Desktop-${version}.jar'
+    archiveBaseName.set('JavaBlocks-Desktop')
+    archiveVersion.set(version)
     mergeServiceFiles()
     include '**/*.class'
     include '**/*.properties'
