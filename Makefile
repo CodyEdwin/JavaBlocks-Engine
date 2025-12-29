@@ -20,8 +20,8 @@ YELLOW := \033[0;33m
 NC := \033[0m
 
 GRADLE := ./gradlew
-ACTIVE_MODULES := core server assets plugins marketplace tools
-DISABLED_MODULES := desktop android html editor
+ACTIVE_MODULES := core server assets plugins marketplace tools desktop editor
+DISABLED_MODULES := android html
 
 .PHONY: all
 all: info build
@@ -196,7 +196,7 @@ echo "$(YELLOW)Warning: Core JAR not found, skipping...$(NC)"
 	@cp server/build/libs/javablocks-server-$(VERSION).jar $(DESTDIR)$(LIB_INSTALL_DIR)/ 2>/dev/null || \
 cp server/build/libs/server-*.jar $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-server.jar 2>/dev/null || \
 echo "$(YELLOW)Warning: Server JAR not found, skipping...$(NC)"
-	@for module in assets plugins marketplace tools; do \
+	@for module in assets plugins marketplace tools desktop editor; do \
 if [ -f "$$module/build/libs/$$module-*.jar" ]; then \
 echo "  Installing $$module..."; \
 cp $$module/build/libs/$$module-*.jar $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-$$module.jar 2>/dev/null || true; \
@@ -220,8 +220,77 @@ echo "$(YELLOW)Warning: No default assets found$(NC)"
 	@echo '    exit 1' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
 	@echo 'fi' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
 	@echo '' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
-	@echo 'exec $$JAVA_CMD -Djavablocks.home=$$JAVA_BLOCKS_HOME -cp "$$LIB_DIR/*" com.javablocks.core.JavaBlocksEngine "$$@"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '# Default to editor if no arguments provided' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo 'MODE="$$1"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo 'shift || true' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo 'case "$$MODE" in' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '    engine)' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        exec $$JAVA_CMD -Djavablocks.home=$$JAVA_BLOCKS_HOME -cp "$$LIB_DIR/*" com.javablocks.core.JavaBlocksEngine "$$@"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        ;;' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '    desktop)' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        exec $$JAVA_CMD -Djavablocks.home=$$JAVA_BLOCKS_HOME -cp "$$LIB_DIR/*" com.javablocks.desktop.JavaBlocksDesktop "$$@"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        ;;' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '    editor|--editor)' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        exec $$JAVA_CMD -Djavablocks.home=$$JAVA_BLOCKS_HOME -cp "$$LIB_DIR/*" com.javablocks.editor.JavaBlocksEditor "$$@"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        ;;' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '    -h|--help|help)' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "JavaBlocks Engine Launcher"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo ""' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "Usage: javablocks [command] [options]"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo ""' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "Commands:"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  engine     Run the JavaBlocks core engine"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  desktop    Run the desktop game launcher"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  editor     Run the visual game editor (default)"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  -h, --help Show this help message"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo ""' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "Examples:"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  javablocks              # Launch editor"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  javablocks editor       # Launch editor"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  javablocks desktop      # Launch desktop launcher"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        echo "  javablocks engine       # Run core engine"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        exit 0' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        ;;' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '    *)' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        # Default to editor for backwards compatibility' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        exec $$JAVA_CMD -Djavablocks.home=$$JAVA_BLOCKS_HOME -cp "$$LIB_DIR/*" com.javablocks.editor.JavaBlocksEditor "$$MODE $$@"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo '        ;;' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo 'esac' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
 	@chmod +x $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
+	@echo "Creating desktop launcher..."
+	@echo '#!/bin/bash' > $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo 'SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo 'LIB_DIR=$${LIB_DIR:-$(LIB_INSTALL_DIR)}' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo '' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo 'if [ -n "$$JAVA_HOME" ]; then' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo '    JAVA_CMD="$$JAVA_HOME/bin/java"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo 'elif command -v java > /dev/null 2>&1; then' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo '    JAVA_CMD="java"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo 'else' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo '    echo "Error: Java not found. Please set JAVA_HOME or install Java 21+."' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo '    exit 1' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo 'fi' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo '' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo 'exec $$JAVA_CMD -cp "$$LIB_DIR/*" com.javablocks.desktop.JavaBlocksDesktop "$$@"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@chmod +x $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-desktop
+	@echo "Creating editor launcher..."
+	@echo '#!/bin/bash' > $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'LIB_DIR=$${LIB_DIR:-$(LIB_INSTALL_DIR)}' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'JAVA_BLOCKS_HOME=$${JAVA_BLOCKS_HOME:-$(SHARE_INSTALL_DIR)}' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo '' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'if [ -n "$$JAVA_HOME" ]; then' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo '    JAVA_CMD="$$JAVA_HOME/bin/java"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'elif command -v java > /dev/null 2>&1; then' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo '    JAVA_CMD="java"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'else' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo '    echo "Error: Java not found. Please set JAVA_HOME or install Java 21+."' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo '    exit 1' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'fi' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo '' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@echo 'exec $$JAVA_CMD -Djavablocks.home=$$JAVA_BLOCKS_HOME -cp "$$LIB_DIR/*" com.javablocks.editor.JavaBlocksEditor "$$@"' >> $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
+	@chmod +x $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks-editor
 	@echo "Creating environment setup..."
 	@echo '# JavaBlocks Engine Environment Setup' > $(DESTDIR)$(SHARE_INSTALL_DIR)/javablocks-env.sh
 	@echo "export JAVA_BLOCKS_HOME=$(SHARE_INSTALL_DIR)" >> $(DESTDIR)$(SHARE_INSTALL_DIR)/javablocks-env.sh
@@ -265,6 +334,8 @@ uninstall:
 	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-plugins.jar
 	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-marketplace.jar
 	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-tools.jar
+	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-desktop.jar
+	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-editor.jar
 	@echo "$(GREEN)Uninstallation complete!$(NC)"
 
 .PHONY: package
