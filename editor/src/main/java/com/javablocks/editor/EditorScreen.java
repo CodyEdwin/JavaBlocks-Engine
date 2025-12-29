@@ -179,9 +179,9 @@ public class EditorScreen {
         hierarchyPanel = new VisTable(true);
         hierarchyPanel.setBackground("window-bg");
         
-        // Panel title
+        // Panel title - use default style with larger font
         VisLabel title = new VisLabel("Hierarchy");
-        title.setStyle(VisUI.getSkin().get("title", Label.LabelStyle.class));
+        title.setStyle(VisUI.getSkin().get("default", Label.LabelStyle.class));
         hierarchyPanel.add(title).top().left().pad(5);
         hierarchyPanel.row();
         
@@ -199,9 +199,9 @@ public class EditorScreen {
         viewportPanel = new VisTable(true);
         viewportPanel.setBackground("window-bg");
         
-        // Viewport title
+        // Viewport title - use default style
         VisLabel title = new VisLabel("Scene View");
-        title.setStyle(VisUI.getSkin().get("title", Label.LabelStyle.class));
+        title.setStyle(VisUI.getSkin().get("default", Label.LabelStyle.class));
         viewportPanel.add(title).top().left().pad(5);
         viewportPanel.row();
         
@@ -218,9 +218,9 @@ public class EditorScreen {
         inspectorPanel = new VisTable(true);
         inspectorPanel.setBackground("window-bg");
         
-        // Panel title
+        // Panel title - use default style
         VisLabel title = new VisLabel("Inspector");
-        title.setStyle(VisUI.getSkin().get("title", Label.LabelStyle.class));
+        title.setStyle(VisUI.getSkin().get("default", Label.LabelStyle.class));
         inspectorPanel.add(title).top().left().pad(5);
         inspectorPanel.row();
         
