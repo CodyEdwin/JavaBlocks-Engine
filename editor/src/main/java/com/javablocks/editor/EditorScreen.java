@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.kotcrab.vis.ui.*;
 import com.kotcrab.vis.ui.widget.*;
+import com.kotcrab.vis.ui.widget.tabbedpane.*;
 
 /**
  * Main editor screen layout.
@@ -45,6 +46,9 @@ public class EditorScreen {
     
     /** Bottom panel (console/assets). */
     VisTable bottomPanel;
+    
+    /** Tab content container for bottom panel. */
+    private VisTable tabContentContainer;
     
     // ==================== Constants ====================
     
@@ -259,16 +263,84 @@ public class EditorScreen {
         bottomPanel = new VisTable(true);
         bottomPanel.setBackground("window-bg");
         
-        // Title
-        VisLabel title = new VisLabel("Output");
-        title.setStyle(VisUI.getSkin().get("title", Label.LabelStyle.class));
-        bottomPanel.add(title).top().left().pad(5);
-        bottomPanel.row();
+        // Tabbed pane for console/assets
+        TabbedPane tabbedPane = new TabbedPane();
         
-        // Console area
-        VisTextArea consoleArea = new VisTextArea();
-        consoleArea.setText("Welcome to JavaBlocks Editor v1.0.0\n>");
-        bottomPanel.add(consoleArea).grow().pad(5);
+        // Container for tab content
+        tabContentContainer = new VisTable();
+        
+        // Create custom tabs
+        ConsoleTab consoleTab = new ConsoleTab();
+        AssetsTab assetsTab = new AssetsTab();
+        
+        tabbedPane.add(consoleTab);
+        tabbedPane.add(assetsTab);
+        
+        // Handle tab switching
+        tabbedPane.addListener(new TabbedPaneAdapter() {
+            @Override
+            public void switchedTab(Tab tab) {
+                tabContentContainer.clearChildren();
+                tabContentContainer.add(tab.getContentTable()).expand().fill();
+            }
+        });
+        
+        // Add tab switcher and content to bottom panel
+        bottomPanel.add(tabbedPane.getTable()).top().growX().pad(5);
+        bottomPanel.row();
+        bottomPanel.add(tabContentContainer).grow().pad(5);
+        
+        // Initialize with first tab content
+        tabContentContainer.add(consoleTab.getContentTable()).expand().fill();
+    }
+    
+    /**
+     * Console tab implementation.
+     */
+    private static class ConsoleTab extends Tab {
+        private final VisTable content;
+        
+        public ConsoleTab() {
+            super(false, false);
+            content = new VisTable();
+            VisTextArea consoleArea = new VisTextArea();
+            consoleArea.setText("Welcome to JavaBlocks Editor v1.0.0\n>");
+            content.add(consoleArea).grow();
+        }
+        
+        @Override
+        public String getTabTitle() {
+            return "Console";
+        }
+        
+        @Override
+        public Table getContentTable() {
+            return content;
+        }
+    }
+    
+    /**
+     * Assets tab implementation.
+     */
+    private static class AssetsTab extends Tab {
+        private final VisTable content;
+        
+        public AssetsTab() {
+            super(false, false);
+            content = new VisTable();
+            VisLabel assetsPlaceholder = new VisLabel("Asset Browser");
+            content.add(assetsPlaceholder).center();
+        }
+        
+        @Override
+        public String getTabTitle() {
+            return "Assets";
+        }
+        
+        @Override
+        public Table getContentTable() {
+            return content;
+        }
     }
     
     // ==================== Update ====================
