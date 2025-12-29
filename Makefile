@@ -11,7 +11,16 @@ BIN_INSTALL_DIR := $(INSTALL_PREFIX)/bin
 LIB_INSTALL_DIR := $(INSTALL_PREFIX)/lib
 SHARE_INSTALL_DIR := $(INSTALL_PREFIX)/share/javablocks-engine
 
-JAVA_HOME ?= $(shell if [ -d "/workspace/jdk-21+35" ]; then echo "/workspace/jdk-21+35"; elif [ -n "$$JAVA_HOME" ]; then echo "$$JAVA_HOME"; elif which java > /dev/null 2>&1; then dirname $$(dirname $$(readlink -f $$(which java))) 2>/dev/null; else echo ""; fi)
+JAVA_HOME ?= $(shell \
+    if [ -d "/workspace/jdk-21+35" ]; then \
+        echo "/workspace/jdk-21+35"; \
+    elif [ -n "$$JAVA_HOME" ] && [ -d "$$JAVA_HOME" ] && [ -f "$$JAVA_HOME/bin/java" ]; then \
+        echo "$$JAVA_HOME"; \
+    elif which java > /dev/null 2>&1; then \
+        dirname $$(dirname $$(readlink -f $$(which java))) 2>/dev/null; \
+    else \
+        echo ""; \
+    fi)
 JAVA_VERSION_REQUIRED := 21
 
 RED := \033[0;31m
@@ -20,8 +29,8 @@ YELLOW := \033[0;33m
 NC := \033[0m
 
 GRADLE := ./gradlew
-ACTIVE_MODULES := core server assets plugins marketplace tools desktop editor
-DISABLED_MODULES := android html
+ACTIVE_MODULES := core assets plugins marketplace tools desktop editor
+DISABLED_MODULES := android html server
 
 .PHONY: all
 all: info build
@@ -192,10 +201,6 @@ install: build
 	@cp core/build/libs/javablocks-core-$(VERSION).jar $(DESTDIR)$(LIB_INSTALL_DIR)/ 2>/dev/null || \
 cp core/build/libs/core-*.jar $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-core.jar 2>/dev/null || \
 echo "$(YELLOW)Warning: Core JAR not found, skipping...$(NC)"
-	@echo "Installing server library..."
-	@cp server/build/libs/javablocks-server-$(VERSION).jar $(DESTDIR)$(LIB_INSTALL_DIR)/ 2>/dev/null || \
-cp server/build/libs/server-*.jar $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-server.jar 2>/dev/null || \
-echo "$(YELLOW)Warning: Server JAR not found, skipping...$(NC)"
 	@for module in assets plugins marketplace tools desktop editor; do \
 if [ -f "$$module/build/libs/$$module-*.jar" ]; then \
 echo "  Installing $$module..."; \
@@ -329,7 +334,6 @@ uninstall:
 	@rm -f $(DESTDIR)$(BIN_INSTALL_DIR)/javablocks
 	@rm -rf $(DESTDIR)$(SHARE_INSTALL_DIR)/
 	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-core-*.jar
-	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-server-*.jar
 	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-assets.jar
 	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-plugins.jar
 	@rm -f $(DESTDIR)$(LIB_INSTALL_DIR)/javablocks-marketplace.jar

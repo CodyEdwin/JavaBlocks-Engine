@@ -76,28 +76,35 @@ CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
 
 # Determine the Java command to use to start the JVM.
-if [ -n "$JAVA_HOME" ] ; then
+# Priority: 1) Project-provided JDK, 2) Valid JAVA_HOME, 3) System java
+if [ -d "$APP_HOME/jdk-21+35" ] ; then
+    JAVACMD="$APP_HOME/jdk-21+35/bin/java"
+elif [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
         # IBM's JDK on AIX uses strange locations for the executables
         JAVACMD=$JAVA_HOME/jre/sh/java
-    else
+    elif [ -x "$JAVA_HOME/bin/java" ] ; then
         JAVACMD=$JAVA_HOME/bin/java
+    else
+        JAVACMD=java
     fi
     if [ ! -x "$JAVACMD" ] ; then
-        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
-
-Please set the JAVA_HOME variable in your environment to match the
-location of your Java installation."
+        # Invalid JAVA_HOME, try system java instead
+        JAVACMD=java
     fi
-else
+fi
+
+if ! command -v "$JAVACMD" >/dev/null 2>&1
+then
     JAVACMD=java
-    if ! command -v java >/dev/null 2>&1
-    then
-        die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+fi
+
+if ! command -v "$JAVACMD" >/dev/null 2>&1
+then
+    die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 
 Please set the JAVA_HOME variable in your environment to match the
-location of your Java installation."
-    fi
+location of your Java installation, or ensure Java 21+ is installed."
 fi
 
 # Increase the maximum file descriptors if we can.
