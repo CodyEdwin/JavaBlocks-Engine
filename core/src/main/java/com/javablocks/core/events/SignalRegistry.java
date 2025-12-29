@@ -103,11 +103,6 @@ public final class SignalRegistry {
         
         signalCount++;
         
-        if (com.javablocks.core.JavaBlocksEngine.get() != null && 
-            com.javablocks.core.JavaBlocksEngine.get().getConfiguration().debugMode) {
-            System.out.println("[SignalRegistry] Registered signal: " + signalClass.getSimpleName());
-        }
-        
         return signal;
     }
     
